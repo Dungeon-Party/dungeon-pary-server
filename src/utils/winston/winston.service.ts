@@ -1,9 +1,9 @@
-import { ConsoleLogger, Injectable } from '@nestjs/common';
-import Winston, { createLogger, format, transports } from 'winston';
+import { ConsoleLogger, Injectable } from '@nestjs/common'
+import Winston, { createLogger, format, transports } from 'winston'
 
 const { combine, timestamp, label, printf, colorize } = format
 const logFormat = printf(({ level, message, label, timestamp }) => {
-    return `${timestamp} [${label}] ${level}: ${message}`;
+  return `${timestamp} [${label}] ${level}: ${message}`
 })
 
 @Injectable()
@@ -18,9 +18,9 @@ export class Logger extends ConsoleLogger {
         colorize(),
         label({ label: customLabel || 'default' }),
         timestamp(),
-        logFormat
+        logFormat,
       ),
-      transports: [new transports.Console()]
+      transports: [new transports.Console()],
     })
   }
 

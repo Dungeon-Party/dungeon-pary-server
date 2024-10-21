@@ -14,11 +14,92 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
+  id        Int      @id @default(autoincrement())
   email     String   @unique
+  username  String   @unique
   name      String?
   password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
+model System {
+  id              Int              @id @default(autoincrement())
+  name            String           @unique
+  desc            String
+  system_versions System_Version[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+}
+
+model System_Version {
+  id             Int             @id @default(autoincrement())
+  version        String
+  system         System          @relation(fields: [systemId], references: [id])
+  systemId       Int
+  release_date   DateTime?
+  skills         Skill[]
+  ability_scores Ability_Score[]
+  classes        Class[]
+  subclasses     Subclass[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+}
+
+model Ability_Score {
+  id              Int            @id @default(autoincrement())
+  name            String
+  full_name       String
+  desc            String
+  skills          Skill[]
+  system_version  System_Version @relation(fields: [systemVersionId], references: [id])
+  systemVersionId Int
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@unique([id, systemVersionId])
+  @@unique([name, systemVersionId])
+}
+
+model Skill {
+  id              Int            @id @default(autoincrement())
+  name            String
+  desc            String
+  ability         Ability_Score  @relation(fields: [abilityId, systemVersionId], references: [id, systemVersionId])
+  abilityId       Int
+  system_version  System_Version @relation(fields: [systemVersionId], references: [id])
+  systemVersionId Int
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@unique([name, systemVersionId])
+}
+
+model Class {
+  id              Int            @id @default(autoincrement())
+  name            String
+  desc            String
+  hit_die         Int
+  subclasses      Subclass[]
+  system_version  System_Version @relation(fields: [systemVersionId], references: [id])
+  systemVersionId Int
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@unique([id, systemVersionId])
+  @@unique([name, systemVersionId])
+}
+
+model Subclass {
+  id              Int            @id @default(autoincrement())
+  name            String
+  desc            String
+  class           Class          @relation(fields: [classId, systemVersionId], references: [id, systemVersionId])
+  classId         Int
+  system_version  System_Version @relation(fields: [systemVersionId], references: [id])
+  systemVersionId Int
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@unique([name, systemVersionId])
+}
