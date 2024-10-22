@@ -3,7 +3,10 @@ import { User } from '@prisma/client'
 import { UserService } from './user.service'
 import { Logger } from 'src/common/winston/winston.service'
 
-@Controller('users')
+@Controller({
+  version: '1',
+  path: 'users',
+})
 export class UserController {
   private readonly logger = new Logger(UserController.name)
 
