@@ -84,6 +84,9 @@
       "yarn format",
       "yarn lint",
       "yarn test --bail --findRelatedTests --passWithNoTests"
+    ],
+    "prisma/schema.prisma": [
+      "yarn db:format"
     ]
   }
 }
