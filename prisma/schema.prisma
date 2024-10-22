@@ -13,6 +13,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Possible Enums:
+// - Role
+// - Dice
+// - SourceType
+// - Size
+
 model User {
   id        Int      @id @default(autoincrement())
   email     String   @unique
@@ -23,83 +29,134 @@ model User {
   updatedAt DateTime @updatedAt
 }
 
+model Source {
+  id           Int        @id @default(autoincrement())
+  name         String
+  abbreviation String?
+  type         String
+  system       System     @relation(fields: [systemId], references: [id])
+  systemId     Int
+  classes      Class[]
+  subclasses   SubClass[]
+  races        Race[]
+  subRaces     SubRace[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
 model System {
-  id              Int              @id @default(autoincrement())
-  name            String           @unique
-  desc            String
-  system_versions System_Version[]
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
+  id            Int            @id @default(autoincrement())
+  name          String         @unique
+  desc          String?
+  sources       Source[]
+  abilityScores AbilityScore[]
+  skills        Skill[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
 }
 
-model System_Version {
-  id             Int             @id @default(autoincrement())
-  version        String
-  system         System          @relation(fields: [systemId], references: [id])
-  systemId       Int
-  release_date   DateTime?
-  skills         Skill[]
-  ability_scores Ability_Score[]
-  classes        Class[]
-  subclasses     Subclass[]
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-}
+model AbilityScore {
+  id        Int      @id @default(autoincrement())
+  name      String
+  full_name String
+  desc      String?
+  skills    Skill[]
+  system    System   @relation(fields: [systemId], references: [id])
+  systemId  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-model Ability_Score {
-  id              Int            @id @default(autoincrement())
-  name            String
-  full_name       String
-  desc            String
-  skills          Skill[]
-  system_version  System_Version @relation(fields: [systemVersionId], references: [id])
-  systemVersionId Int
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
-
-  @@unique([id, systemVersionId])
-  @@unique([name, systemVersionId])
+  @@unique([id, systemId])
+  @@unique([name, systemId])
 }
 
 model Skill {
-  id              Int            @id @default(autoincrement())
-  name            String
-  desc            String
-  ability         Ability_Score  @relation(fields: [abilityId, systemVersionId], references: [id, systemVersionId])
-  abilityId       Int
-  system_version  System_Version @relation(fields: [systemVersionId], references: [id])
-  systemVersionId Int
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
+  id        Int          @id @default(autoincrement())
+  name      String
+  desc      String?
+  ability   AbilityScore @relation(fields: [abilityId, systemId], references: [id, systemId])
+  abilityId Int
+  system    System       @relation(fields: [systemId], references: [id])
+  systemId  Int
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
 
-  @@unique([name, systemVersionId])
+  @@unique([name, systemId])
 }
 
 model Class {
-  id              Int            @id @default(autoincrement())
-  name            String
-  desc            String
-  hit_die         Int
-  subclasses      Subclass[]
-  system_version  System_Version @relation(fields: [systemVersionId], references: [id])
-  systemVersionId Int
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
-
-  @@unique([id, systemVersionId])
-  @@unique([name, systemVersionId])
+  id         Int        @id @default(autoincrement())
+  name       String
+  desc       String?
+  hitDie     Int
+  subclasses SubClass[]
+  source     Source     @relation(fields: [sourceId], references: [id])
+  sourceId   Int
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
 }
 
-model Subclass {
-  id              Int            @id @default(autoincrement())
-  name            String
-  desc            String
-  class           Class          @relation(fields: [classId, systemVersionId], references: [id, systemVersionId])
-  classId         Int
-  system_version  System_Version @relation(fields: [systemVersionId], references: [id])
-  systemVersionId Int
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
+model SubClass {
+  id        Int      @id @default(autoincrement())
+  name      String
+  desc      String?
+  class     Class    @relation(fields: [classId], references: [id])
+  classId   Int
+  source    Source   @relation(fields: [sourceId], references: [id])
+  sourceId  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
 
-  @@unique([name, systemVersionId])
+model Race {
+  id        Int       @id @default(autoincrement())
+  name      String
+  speed     Int
+  size      String
+  subRaces  SubRace[]
+  source    Source    @relation(fields: [sourceId], references: [id])
+  sourceId  Int
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model SubRace {
+  id        Int      @id @default(autoincrement())
+  name      String
+  race      Race     @relation(fields: [raceId], references: [id])
+  raceId    Int
+  source    Source   @relation(fields: [sourceId], references: [id])
+  sourceId  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Spell {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Item {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Monster {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Trait {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Feat {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

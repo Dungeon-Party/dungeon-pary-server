@@ -12,6 +12,11 @@ export class UserController {
   @Get()
   findAll(): Promise<User[]> {
     this.logger.info('Fetching all users')
-    return this.userService.findAll({})
+    return this.userService.findAll({}).then((users) => {
+      return users.map((user) => {
+        delete user.password
+        return user
+      })
+    })
   }
 }
