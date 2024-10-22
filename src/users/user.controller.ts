@@ -1,7 +1,7 @@
 import { Controller, Get } from '@nestjs/common'
 import { User } from '@prisma/client'
 import { UserService } from './user.service'
-import { Logger } from 'src/utils/winston/winston.service'
+import { Logger } from 'src/common/winston/winston.service'
 
 @Controller('users')
 export class UserController {

@@ -1,9 +1,12 @@
 import { Injectable } from '@nestjs/common'
-import { PrismaService } from '../utils/prisma/prisma.service'
+import { PrismaService } from '../common/prisma/prisma.service'
 import { User, Prisma } from '@prisma/client'
+import { Logger } from '../common/winston/winston.service'
 
 @Injectable()
 export class UserService {
+  private readonly logger = new Logger(UserService.name)
+
   constructor(private prisma: PrismaService) {}
 
   async findOne(

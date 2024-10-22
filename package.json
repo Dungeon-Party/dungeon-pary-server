@@ -80,11 +80,10 @@
     "testEnvironment": "node"
   },
   "lint-staged": {
-    "*.js": [
+    "**/*.ts": [
       "yarn format",
       "yarn lint",
-      "yarn test --bail --findRelatedTests",
-      "git add"
+      "yarn test --bail --findRelatedTests --passWithNoTests"
     ]
   }
 }
