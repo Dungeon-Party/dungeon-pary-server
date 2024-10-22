@@ -1,6 +1,8 @@
 import { NestFactory } from '@nestjs/core'
 import { VersioningType } from '@nestjs/common'
+import { Request } from 'express'
 import { AppModule } from './app.module'
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import { Logger } from './common/winston/winston.service'
 
 async function bootstrap() {
@@ -8,9 +10,41 @@ async function bootstrap() {
     bufferLogs: true,
   })
   app.useLogger(app.get(Logger))
+  app.setGlobalPrefix('api')
   app.enableVersioning({
     type: VersioningType.URI,
   })
+
+  const config = new DocumentBuilder()
+    .setTitle('Dungeon Party API')
+    .setDescription('API for Dungeon Party')
+    .build()
+  const documentFactory = () => SwaggerModule.createDocument(app, config)
+  SwaggerModule.setup(':version/docs', app, documentFactory, {
+    useGlobalPrefix: true,
+    patchDocumentOnRequest: (req, _res, document) => {
+      // NOTE: Make a deep copy of the original document or it will be modified on subsequent calls!
+      const copyDocument = JSON.parse(JSON.stringify(document))
+      const version = (req as Request).params.version
+      const isValidVersion = /^v[0-9]+$/
+
+      if (!version || !isValidVersion.test(version)) {
+        return
+      } else {
+        copyDocument.info.version = version
+      }
+
+      for (const route in document.paths) {
+        if (route.includes(`/${version}/`)) {
+          continue
+        }
+        delete copyDocument.paths[route]
+      }
+
+      return copyDocument
+    },
+  })
+
   await app.listen(process.env.PORT ?? 3000)
 }
 bootstrap()
