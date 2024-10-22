@@ -26,9 +26,6 @@ export class SystemService {
   }): Promise<System[]> {
     const { skip, take, cursor, where, orderBy } = params
     return this.prisma.system.findMany({
-      include: {
-        system_versions: true,
-      },
       skip,
       take,
       cursor,
