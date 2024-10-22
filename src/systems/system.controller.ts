@@ -3,10 +3,7 @@ import { Logger } from '../common/winston/winston.service'
 import { SystemService } from './system.service'
 import { System } from '@prisma/client'
 
-@Controller({
-  version: '1',
-  path: 'systems',
-})
+@Controller('systems')
 export class SystemController {
   private readonly logger = new Logger(SystemController.name)
 

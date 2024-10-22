@@ -3,10 +3,7 @@ import { User } from '@prisma/client'
 import { UserService } from './user.service'
 import { Logger } from 'src/common/winston/winston.service'
 
-@Controller({
-  version: '1',
-  path: 'users',
-})
+@Controller('users')
 export class UserController {
   private readonly logger = new Logger(UserController.name)
 
@@ -15,6 +12,11 @@ export class UserController {
   @Get()
   findAll(): Promise<User[]> {
     this.logger.info('Fetching all users')
-    return this.userService.findAll({})
+    return this.userService.findAll({}).then((users) => {
+      return users.map((user) => {
+        delete user.password
+        return user
+      })
+    })
   }
 }
