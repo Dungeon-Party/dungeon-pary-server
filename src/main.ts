@@ -1,9 +1,10 @@
-import { NestFactory } from '@nestjs/core'
 import { VersioningType } from '@nestjs/common'
+import { NestFactory } from '@nestjs/core'
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { Request } from 'express'
-import { AppModule } from './app.module'
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import helmet from 'helmet'
+
+import { AppModule } from './app.module'
 import { Logger } from './common/winston/winston.service'
 
 async function bootstrap() {

@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common'
-import { PrismaService } from '../common/prisma/prisma.service'
-import { User, Prisma } from '@prisma/client'
-import { Logger } from '../common/winston/winston.service'
+import { Prisma, User } from '@prisma/client'
 import { hashSync } from 'bcryptjs'
+
+import { PrismaService } from '../common/prisma/prisma.service'
+import { Logger } from '../common/winston/winston.service'
 
 @Injectable()
 export class UserService {
