@@ -20,7 +20,7 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post('login')
   signIn(@Request() req) {
-    return this.authService.login(req.user)
+    return this.authService.generateJwt(req.user)
   }
 
   @UseGuards(JwtAuthGuard)

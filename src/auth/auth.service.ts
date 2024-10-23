@@ -14,20 +14,18 @@ export class AuthService {
   async validateUser(
     username: string,
     pass: string,
-  ): Promise<{ access_token: string }> {
+  ): Promise<Partial<User> | null> {
     const user = await this.userService.findOne({
       OR: [{ email: username }, { username: username }],
     })
     if (!user || !compareSync(pass, user.password)) {
       throw new UnauthorizedException()
     }
-    const payload = { username: user.username, sub: user.id }
-    return {
-      access_token: await this.jwtService.sign(payload),
-    }
+    delete user.password
+    return user
   }
 
-  async login(user: User) {
+  async generateJwt(user: User) {
     const payload = { username: user.username, sub: user.id }
     return {
       access_token: this.jwtService.sign(payload),
