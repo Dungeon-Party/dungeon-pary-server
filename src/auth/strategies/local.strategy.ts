@@ -13,10 +13,10 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     username: string,
     password: string,
   ): Promise<{ access_token: string }> {
-    const user = await this.authService.validateUser(username, password)
-    if (!user) {
+    const token = await this.authService.validateUser(username, password)
+    if (!token) {
       throw new UnauthorizedException()
     }
-    return user
+    return token
   }
 }

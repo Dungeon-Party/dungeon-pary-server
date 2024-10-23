@@ -21,9 +21,9 @@ export class AuthService {
     if (!user || !compareSync(pass, user.password)) {
       throw new UnauthorizedException()
     }
-    const payload = { sub: user.id, email: user.email }
+    const payload = { username: user.username, sub: user.id }
     return {
-      access_token: await this.jwtService.signAsync(payload),
+      access_token: await this.jwtService.sign(payload),
     }
   }
 
@@ -32,5 +32,9 @@ export class AuthService {
     return {
       access_token: this.jwtService.sign(payload),
     }
+  }
+
+  async validateApiKey(key: string): Promise<Partial<User>> {
+    return this.userService.findApiKey(key)
   }
 }

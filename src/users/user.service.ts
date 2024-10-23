@@ -56,4 +56,22 @@ export class UserService {
       where,
     })
   }
+
+  async findApiKey(key: string): Promise<Partial<User> | null> {
+    return this.prisma.user.findFirst({
+      where: {
+        apiKey: {
+          some: {
+            key,
+            expiresAt: { gt: new Date() },
+          },
+        },
+      },
+      select: {
+        name: true,
+        username: true,
+        email: true,
+      },
+    })
+  }
 }
