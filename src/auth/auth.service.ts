@@ -26,7 +26,12 @@ export class AuthService {
   }
 
   async generateJwt(user: User) {
-    const payload = { username: user.username, sub: user.id }
+    const payload = {
+      sub: user.id,
+      iss: 'dungeon-party',
+      username: user.username,
+      email: user.email,
+    }
     return {
       access_token: this.jwtService.sign(payload),
     }

@@ -3,6 +3,7 @@ import { VersioningType } from '@nestjs/common'
 import { Request } from 'express'
 import { AppModule } from './app.module'
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
+import helmet from 'helmet'
 import { Logger } from './common/winston/winston.service'
 
 async function bootstrap() {
@@ -15,14 +16,25 @@ async function bootstrap() {
     type: VersioningType.URI,
     defaultVersion: '1',
   })
+  app.use(helmet())
 
   const config = new DocumentBuilder()
     .setTitle('Dungeon Party API')
     .setDescription('API for Dungeon Party')
+    .addBearerAuth()
+    .addApiKey(
+      {
+        type: 'apiKey',
+        name: 'Authorization',
+        in: 'header',
+      },
+      'api-key',
+    )
     .build()
   const documentFactory = () => SwaggerModule.createDocument(app, config)
   SwaggerModule.setup(':version/docs', app, documentFactory, {
     useGlobalPrefix: true,
+    jsonDocumentUrl: 'swagger/json',
     patchDocumentOnRequest: (req, _res, document) => {
       // NOTE: Make a deep copy of the original document or it will be modified on subsequent calls!
       const copyDocument = JSON.parse(JSON.stringify(document))
