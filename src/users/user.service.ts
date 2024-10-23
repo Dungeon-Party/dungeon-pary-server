@@ -10,9 +10,7 @@ export class UserService {
 
   constructor(private prisma: PrismaService) {}
 
-  async findOne(
-    userWhereInput: Prisma.UserWhereInput,
-  ): Promise<User | null> {
+  async findOne(userWhereInput: Prisma.UserWhereInput): Promise<User | null> {
     return this.prisma.user.findFirst({
       where: userWhereInput,
     })
