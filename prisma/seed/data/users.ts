@@ -1,4 +1,8 @@
-export default [
+import { genSaltSync, hashSync } from 'bcryptjs'
+
+const salt = genSaltSync(10)
+
+const users = [
   {
     id: 1,
     name: 'Rick',
@@ -7,3 +11,10 @@ export default [
     password: 'password',
   },
 ]
+
+export default users.map((user) => {
+  return {
+    ...user,
+    password: hashSync(user.password, salt),
+  }
+})
